@@ -129,7 +129,7 @@ enum Command {
     #[structopt(name = "minimap")]
     Minimap {
         /// The output directory.
-        #[structopt(short="o", default_value="data/minimaps")]
+        #[structopt(short="o", default_value="data/nanomaps")]
         output: String,
 
         /// Set the minimum x,y or x,y,z coordinate to act upon (1-indexed, inclusive).
@@ -298,7 +298,7 @@ fn run(opt: &Opt, command: &Command, context: &mut Context) {
                         return;
                     }
                     let outfile = format!(
-                        "{}/{}-{}.png",
+                        "{}/{}_nanomap_z{}.png",
                         output,
                         path.file_stem().unwrap().to_string_lossy(),
                         1 + z
