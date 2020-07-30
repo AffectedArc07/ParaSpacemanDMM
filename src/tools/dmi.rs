@@ -170,6 +170,25 @@ impl Image {
         Ok(())
     }
 
+    pub fn resize(self, width: u32, height: u32) -> io::Result<Image> {
+        use image::{ImageBuffer, DynamicImage};
+
+        let old_img = DynamicImage::ImageRgba8(ImageBuffer::from_raw(self.width, self.height, self.data.as_slice().unwrap().to_vec()).unwrap());
+        let new_img = old_img.thumbnail_exact(width, height);
+        let new_data = match Array3::from_shape_vec((height as usize, width as usize, 4), new_img.into_rgba().into_raw()) {
+            Ok(v) => v,
+            Err(e) => return Err(io::Error::new(io::ErrorKind::InvalidData, e)),
+        };
+
+        Ok(
+            Image {
+                width,
+                height,
+                data: new_data,
+            }
+        )
+    }
+
     pub fn composite(&mut self, other: &Image, pos: (u32, u32), crop: Rect, color: [u8; 4]) {
         use ndarray::Axis;
 
