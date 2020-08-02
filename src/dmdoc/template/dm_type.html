@@ -3,9 +3,6 @@
 {% block title %}{{ path }}{% endblock %}
 {% block header -%}
 {{ super() }}
-{%- if details.vars %} &mdash; <a href="{{ details.htmlname | safe }}.html#var">Var Details</a>{% endif %}
-{%- if details.procs %}{% if details.vars %} - {% else %} &mdash; {% endif -%}
-    <a href="{{ details.htmlname | safe }}.html#proc">Proc Details</a>{% endif %}
 {%- endblock %}
 {% block content %}
 <h1>{% if path == "(global)" -%}
@@ -23,14 +20,14 @@
 {%- if details.vars or details.procs -%}
     <table class="summary" cellspacing="0">
     {%- if details.vars -%}
-        <tr><td colspan="2"><h2>Vars</h2></td></tr>
+        <tr><td colspan="2"><h2>Vars</h2><a href="{{ details.htmlname | safe }}.html#var">Jump To Var Details</a></td></tr>
         {%- for name, var in details.vars %}
             <tr><th><a href="{{details.htmlname|safe}}.html#var/{{name}}">{{ name }}</a></th><td>{{ macros::teaser(block=var.docs) }}</td></tr>
         {%- endfor %}
     {%- endif -%}
 
     {%- if details.procs -%}
-        <tr><td colspan="2"><h2>Procs</h2></td></tr>
+        <tr><td colspan="2"><h2>Procs</h2><a href="{{ details.htmlname | safe }}.html#proc">Jump To Proc Details</a></td></tr>
         {%- for name, proc in details.procs %}
             <tr><th><a href="{{details.htmlname|safe}}.html#proc/{{name}}">{{ name }}</a></th><td>{{ macros::teaser(block=proc.docs) }}</td></tr>
         {%- endfor %}
@@ -41,7 +38,7 @@
 {% if details.vars %}
     <h2 id="var">Var Details</h2>
     {%- for name, var in details.vars -%}
-        <h3 id="var/{{ name }}">
+        <h5 id="var/{{ name }}">
         {%- if var.decl -%}
             <aside class="declaration">{{ var.decl }} </aside>
         {%- elif var.parent -%}
@@ -54,7 +51,7 @@
                 {%- if var.type.is_tmp %}/tmp{% endif -%}
                 {{ var.type.path | linkify_type | safe }}</aside>
         {%- endif -%}
-        {{ macros::git_link(env=env, item=var) }}</h3>
+        {{ macros::git_link(env=env, item=var) }}</h5>
         {{ var.docs.html | safe }}
     {%- endfor -%}
 {% endif %}
@@ -62,7 +59,7 @@
 {%- if details.procs -%}
     <h2 id="proc">Proc Details</h2>
     {%- for name, proc in details.procs -%}
-        <h3 id="proc/{{ name }}">
+        <h5 id="proc/{{ name }}">
             {%- if proc.decl -%}
                 <aside class="declaration">{{ proc.decl }} </aside>
             {%- elif proc.parent -%}
@@ -74,7 +71,7 @@
                 {% if param.type_path %}{{ param.type_path | linkify_type | safe }}/{% endif %}{{ param.name }}
             {%- endfor -%}
             ) {{ macros::git_link(env=env, item=proc) }}</aside>
-        </h3>
+        </h5>
         {{ proc.docs.html | safe }}
     {%- endfor -%}
 {%- endif -%}
